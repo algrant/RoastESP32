@@ -39,7 +39,15 @@ Took advantage from TC4 protocol with a little twist... BLUETOOTH
 
 ### Artisan
 1. Click "Config > Device" and choose "TC4" and uncheck "PID Firmware"
-2. Click "Config > Port", Comm Port "/dev/cu.SLAB_USBtoUART", Baud Rate "115200"
+
+### USB
+- Artisan Click "Config > Port", Comm Port "/dev/cu.SLAB_USBtoUART", Baud Rate "115200"
+
+### Bluetooth
+- Plug the ESP32 to usb charger
+- Open Bluetooth Preferences...
+- Connect to "RoastESP32"
+- Artisan Click "Config > Port", Comm Port "/dev/cu.RoastESP32-ESP32SPP", Baud Rate "115200"
 
 Enjoy!
 > - Anuwat Hokoon
