@@ -2,7 +2,7 @@
 
 Took advantage from TC4 protocol with a little twist... BLUETOOTH
 
-![Wiring Diagram](https://raw.githubusercontent.com/hokoon/RoastESP32/master/wiring.png)
+![Wiring Diagram](https://raw.githubusercontent.com/hokoon/RoastESP32/master/images/wiring.png)
 
 ## Requirement
 
@@ -52,5 +52,8 @@ Took advantage from TC4 protocol with a little twist... BLUETOOTH
 Enjoy!
 > - Anuwat Hokoon
 
+![Assembled 1](https://raw.githubusercontent.com/hokoon/RoastESP32/master/images/assembled1.jpg =1080x)
+![Assembled 2](https://raw.githubusercontent.com/hokoon/RoastESP32/master/images/assembled2.jpg =1080x)
+![Screen Shot](https://raw.githubusercontent.com/hokoon/RoastESP32/master/images/screenshot.png =1080x)
 
 
