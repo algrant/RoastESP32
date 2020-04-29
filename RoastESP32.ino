@@ -26,6 +26,16 @@
  *  
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+uint8_t temprature_sens_read();
+#ifdef __cplusplus
+}
+#endif
+uint8_t temprature_sens_read();
+
+
 #include <SerialCommands.h> // https://github.com/ppedro74/Arduino-SerialCommands
 #include <BluetoothSerial.h> // Classic Bluetooth
 #include <DHT.h> // DHT22
@@ -148,6 +158,8 @@ void cmdRead(SerialCommands* sender){
     sender->GetSerial()->print(readFahrenheit(TC3_CS));
     sender->GetSerial()->print(",");
     sender->GetSerial()->print(readFahrenheit(TC4_CS));
+    sender->GetSerial()->print(",0.00,0.00,0.00,"); // Heater, Fan, PID set value
+    sender->GetSerial()->print(temprature_sens_read()); // Internal temp
   }else{
     sender->GetSerial()->print(ambientc);
     sender->GetSerial()->print(",");
@@ -158,6 +170,8 @@ void cmdRead(SerialCommands* sender){
     sender->GetSerial()->print(readCelsius(TC3_CS));
     sender->GetSerial()->print(",");
     sender->GetSerial()->print(readCelsius(TC4_CS));
+    sender->GetSerial()->print(",0.00,0.00,0.00,"); // Heater, Fan, PID set value
+    sender->GetSerial()->print((temprature_sens_read() - 32) / 1.8); // Internal temp
   }
   sender->GetSerial()->println("");
 }
