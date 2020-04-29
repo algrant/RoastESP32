@@ -38,7 +38,7 @@ Took advantage from TC4 protocol with a little twist... BLUETOOTH
 ## Usage
 
 ### Artisan
-1. Click "Config > Device" and choose "TC4" and uncheck "PID Firmware"
+1. Click "Config > Device" and choose "TC4"
 
 ### USB
 - Artisan Click "Config > Port", Comm Port "/dev/cu.SLAB_USBtoUART", Baud Rate "115200"
@@ -48,6 +48,12 @@ Took advantage from TC4 protocol with a little twist... BLUETOOTH
 - Open Bluetooth Preferences...
 - Connect to "RoastESP32"
 - Artisan Click "Config > Port", Comm Port "/dev/cu.RoastESP32-ESP32SPP", Baud Rate "115200"
+
+## Output
+- ArduinoTC4 12 = TC1, TC2
+- ArduinoTC4 34 = TC3, TC4
+- ArduinoTC4 56 = Heater, Fan (both return 0)
+- ArduinoTC4 78 = PID_SV, HWTemp (PID_SV return 0)
 
 Enjoy!
 > - Anuwat Hokoon
