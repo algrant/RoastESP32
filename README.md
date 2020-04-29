@@ -53,7 +53,7 @@ Took advantage from TC4 protocol with a little twist... BLUETOOTH
 - ArduinoTC4 12 = TC1, TC2
 - ArduinoTC4 34 = TC3, TC4
 - ArduinoTC4 56 = Heater, Fan (both return 0)
-- ArduinoTC4 78 = PID_SV, HWTemp (PID_SV return 0)
+- ArduinoTC4 78 = PID_SV, Ambient (PID_SV return 0)
 
 Enjoy!
 > - Anuwat Hokoon
