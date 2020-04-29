@@ -58,6 +58,11 @@ double ambientf;
 
 bool unit_F               = false;
 
+#define SMA                     5
+int sma_idx                   = 0;
+bool sma_filled           = false;
+double tc1s[SMA], tc2s[SMA], tc3s[SMA], tc4s[SMA];
+double tc1, tc2, tc3, tc4;
 
 // DHT22
 void readDHT(){
@@ -98,6 +103,38 @@ double readCelsius(uint8_t cs) {
 
 double readFahrenheit(uint8_t cs) {
   return readCelsius(cs) * 1.8 + 32;
+}
+
+bool readTCs(){
+  tc1s[sma_idx] = readCelsius(TC1_CS);
+  tc2s[sma_idx] = readCelsius(TC2_CS);
+  tc3s[sma_idx] = readCelsius(TC3_CS);
+  tc4s[sma_idx] = readCelsius(TC4_CS);
+  if(!isnan(tc1s[sma_idx]) && !isnan(tc1s[sma_idx]) && !isnan(tc1s[sma_idx]) && !isnan(tc1s[sma_idx])){
+    sma_idx++;
+    if(sma_idx >= SMA){
+      sma_filled = true;
+      sma_idx = 0;
+    }
+    tc1 = 0;
+    tc2 = 0;
+    tc3 = 0;
+    tc4 = 0;
+    if(sma_filled){
+      for(int i = 0; i<SMA; i++){
+        tc1 += tc1s[i];
+        tc2 += tc2s[i];
+        tc3 += tc3s[i];
+        tc4 += tc4s[i];
+      }
+      tc1 /= SMA;
+      tc2 /= SMA;
+      tc3 /= SMA;
+      tc4 /= SMA;
+    }
+    return true;
+  }
+  return false;
 }
 
 
@@ -141,24 +178,24 @@ void cmdRead(SerialCommands* sender){
   if(unit_F){
     sender->GetSerial()->print(ambientf);
     sender->GetSerial()->print(",");
-    sender->GetSerial()->print(readFahrenheit(TC1_CS));
+    sender->GetSerial()->print(tc1 * 1.8 + 32);
     sender->GetSerial()->print(",");
-    sender->GetSerial()->print(readFahrenheit(TC2_CS));
+    sender->GetSerial()->print(tc2 * 1.8 + 32);
     sender->GetSerial()->print(",");
-    sender->GetSerial()->print(readFahrenheit(TC3_CS));
+    sender->GetSerial()->print(tc3 * 1.8 + 32);
     sender->GetSerial()->print(",");
-    sender->GetSerial()->print(readFahrenheit(TC4_CS));
+    sender->GetSerial()->print(tc4 * 1.8 + 32);
     sender->GetSerial()->print(",0.00,0.00,0.00"); // Heater, Fan, PID set value
   }else{
     sender->GetSerial()->print(ambientc);
     sender->GetSerial()->print(",");
-    sender->GetSerial()->print(readCelsius(TC1_CS));
+    sender->GetSerial()->print(tc1);
     sender->GetSerial()->print(",");
-    sender->GetSerial()->print(readCelsius(TC2_CS));
+    sender->GetSerial()->print(tc2);
     sender->GetSerial()->print(",");
-    sender->GetSerial()->print(readCelsius(TC3_CS));
+    sender->GetSerial()->print(tc3);
     sender->GetSerial()->print(",");
-    sender->GetSerial()->print(readCelsius(TC4_CS));
+    sender->GetSerial()->print(tc4);
     sender->GetSerial()->print(",0.00,0.00,0.00"); // Heater, Fan, PID set value
   }
   sender->GetSerial()->println("");
@@ -197,9 +234,19 @@ void setup(){
   serialbt_cmds.AddCommand(&serialCmdSetUnits);
   serialbt_cmds.AddCommand(&serialCmdSetFilter);
   serialbt_cmds.AddCommand(&serialCmdRead);
+
+  sma_idx = 0;
+  sma_filled = true;
+  tc1 = 0;
+  tc2 = 0;
+  tc3 = 0;
+  tc4 = 0;
 }
 
 void loop(){
   serialbt_cmds.ReadSerial();
   serial_cmds.ReadSerial();
+  if(readTCs()){
+    delay(200);
+  }
 }
