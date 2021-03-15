@@ -1,3 +1,34 @@
+# RoastESP32-CAM
+
+Modifying https://github.com/hokoon/RoastESP32 to work on a cloned AI-Thinker ESP32-CAM board.
+
+Notes:
+* Parts:
+    * cloned board: https://www.amazon.com/ESP32-CAM-Bluetooth-Camera-Module-Development/dp/B07S5PVZKV
+    * 
+
+
+* I don't have a DH22 module, so I may end up commenting that code out
+
+* I only plan to use a couple thermistors so may hide some of the extras
+
+* I got ESP32-Cam running demo code from here, https://randomnerdtutorials.com/program-upload-code-esp32-cam
+
+* Made a proof of concept of the ESP32-CAM + SPI
+  * the "trick" is you have to define your pinouts for SPI cause the defaults are used by camera stuff
+  * learned more about SPI in here
+    * https://www.youtube.com/watch?v=w3VIxtLPuRE
+  * here's the POC arduino sketch:  
+    * https://gist.github.com/algrant/cd86aedb10d1b8f9302a87aa4770f49e
+
+
+Steps taken:
+* Install libraries in Arduino IDE Library Manager
+  * SerialCommands
+
+Todo:
+  * Update code with new pins & flash board...
+
 # RoastESP32
 
 Took advantage from TC4 protocol with a little twist... BLUETOOTH

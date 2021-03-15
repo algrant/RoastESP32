@@ -32,7 +32,7 @@
 #include <SPI.h> // MAX6675 over hardware SPI
 
 // Bluetooth
-#define ROAST_ESP32_BLUETOOTH_NAME "RoastESP32" //Bluetooth device name
+#define ROAST_ESP32_BLUETOOTH_NAME "RoastESP32_CAM" //Bluetooth device name
 BluetoothSerial SerialBT;
 
 // DHT22
@@ -44,17 +44,21 @@ double ambientc;
 double ambientf;
 
 // MAX6675
-#define TC1_CS                 32 // GPIO32 -> CS MAX6675[TC1]
-#define TC2_CS                 33 // GPIO33 -> CS MAX6675[TC2]
-#define TC3_CS                 25 // GPIO25 -> CS MAX6675[TC3]
-#define TC4_CS                 26 // GPIO26 -> CS MAX6675[TC4]
+#define TC1_CS                 12 // GPIO12 -> CS MAX6675[TC1]
+#define TC2_CS                 13 // GPIO13 -> CS MAX6675[TC2]
+#define TC3_CS                 15 // GPIO15 -> CS MAX6675[TC3]
+#define TC4_CS                 26 // GPIO26 -> CS MAX6675[TC4] <- I don't have a fourth max6675 so whatever...
 /* Note: All MAX6675
  *  MAX6675 to  EPS32
  *  VCC     ->  3.3V
  *  GND     ->  GND
- *  SCK     ->  GPIO18/CLK
- *  SO      ->  GPIO19/MISO
+ *  SCK     ->  GPIO14/CLK  <-- for ESP32-CAM
+ *  SO      ->  GPIO2/MISO  <-- for ESP32-CAM
  */
+
+#define ESP32_CAM_CLK 14
+#define ESP32_CAM_MISO 2
+
 
 bool unit_F               = false;
 
@@ -176,7 +180,7 @@ SerialCommand serialCmdSetFilter("FILT", cmdSetFilter);
 void cmdRead(SerialCommands* sender){
   readDHT();
   if(unit_F){
-    sender->GetSerial()->print(ambientf);
+    sender->GetSerial()->print(tc1 * 1.8 + 32); // double down on tc1 cause I have no ambient
     sender->GetSerial()->print(",");
     sender->GetSerial()->print(tc1 * 1.8 + 32);
     sender->GetSerial()->print(",");
@@ -184,10 +188,10 @@ void cmdRead(SerialCommands* sender){
     sender->GetSerial()->print(",");
     sender->GetSerial()->print(tc3 * 1.8 + 32);
     sender->GetSerial()->print(",");
-    sender->GetSerial()->print(tc4 * 1.8 + 32);
+    sender->GetSerial()->print(0 * 1.8 + 32); // don't send nans for missing tc4
     sender->GetSerial()->print(",0.00,0.00,0.00"); // Heater, Fan, PID set value
   }else{
-    sender->GetSerial()->print(ambientc);
+    sender->GetSerial()->print(tc1); // double down on tc1 cause I have no ambient
     sender->GetSerial()->print(",");
     sender->GetSerial()->print(tc1);
     sender->GetSerial()->print(",");
@@ -195,7 +199,7 @@ void cmdRead(SerialCommands* sender){
     sender->GetSerial()->print(",");
     sender->GetSerial()->print(tc3);
     sender->GetSerial()->print(",");
-    sender->GetSerial()->print(tc4);
+    sender->GetSerial()->print(0); // don't send nans for missing tc4
     sender->GetSerial()->print(",0.00,0.00,0.00"); // Heater, Fan, PID set value
   }
   sender->GetSerial()->println("");
@@ -217,7 +221,7 @@ void setup(){
   digitalWrite(TC2_CS, HIGH);
   digitalWrite(TC3_CS, HIGH);
   digitalWrite(TC4_CS, HIGH);
-  SPI.begin();
+  SPI.begin(ESP32_CAM_CLK, ESP32_CAM_MISO);
   SPI.beginTransaction (SPISettings (1000000, MSBFIRST, SPI_MODE0));
 
   // USB Serial
@@ -227,6 +231,7 @@ void setup(){
   serial_cmds.AddCommand(&serialCmdSetUnits);
   serial_cmds.AddCommand(&serialCmdSetFilter);
   serial_cmds.AddCommand(&serialCmdRead);
+
   // Bluetooth Serial
   SerialBT.begin(ROAST_ESP32_BLUETOOTH_NAME);
   serialbt_cmds.SetDefaultHandler(cmd_unrecognized);
